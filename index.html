@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Three.js Multiple Views</title>
+    <style>
+        .viewport {
+            width: 400px;
+            height: 300px;
+            float: left;
+            margin: 10px;
+            position: relative;
+        }
+        .label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="view1" class="viewport"><div class="label">正面視点 (Front)</div></div>
+    <div id="view2" class="viewport"><div class="label">上面視点 (Top)</div></div>
+    <div id="view3" class="viewport"><div class="label">側面視点 (Side)</div></div>
+
+    <script type="module">
+        import * as THREE from 'cdnPath';
+
+        const scene = new THREE.Scene();
+        
+        const gridHelper = new THREE.GridHelper(10, 10);
+        scene.add(gridHelper);
+
+        const axesHelper = new THREE.AxesHelper(5);
+        scene.add(axesHelper);
+        
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        const cameras = [
+            new THREE.PerspectiveCamera(75, 400 / 300, 0.1, 1000),
+            new THREE.PerspectiveCamera(75, 400 / 300, 0.1, 1000),
+            new THREE.PerspectiveCamera(75, 400 / 300, 0.1, 1000)
+        ];
+
+        cameras[0].position.z = 5;
+        cameras[1].position.y = 5;
+        cameras[1].lookAt(0, 0, 0);
+        cameras[2].position.x = 5;
+        cameras[2].lookAt(0, 0, 0);
+
+        const renderers = [];
+
+        cameras.forEach((camera, index) => {
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(400, 300);
+            document.getElementById(`view${index + 1}`).appendChild(renderer.domElement);
+            renderers.push(renderer);
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            
+            renderers.forEach((renderer, index) => {
+                renderer.render(scene, cameras[index]);
+            });
+        }
+
+        animate();
+    </script>
+</body>
+</html>
