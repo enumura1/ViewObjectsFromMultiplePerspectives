@@ -8,3 +8,5 @@ showing multiple synchronized views of a 3D scene
 - Animated wireframe cube
 - Grid and axis helpers
 - Responsive layout
+
+![alt text](image-1.png)
